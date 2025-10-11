@@ -27,7 +27,7 @@ public struct Authorization: HeaderProtocol {
     public let key = "Authorization"
     public let value: String
 
-    public init(value: String) {
+    public init(_ value: String) {
         self.value = value
     }
 }
