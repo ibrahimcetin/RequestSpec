@@ -57,4 +57,12 @@ extension Request {
         copy.components.cachePolicy = policy
         return copy
     }
+
+    /// Set the cellular access
+    /// - Parameter allowsCellularAccess: Whether the request can use cellular network
+    public func allowsCellularAccess(_ allowsCellularAccess: Bool) -> Self {
+        var copy = self
+        copy.components.allowsCellularAccess = allowsCellularAccess
+        return copy
+    }
 }
