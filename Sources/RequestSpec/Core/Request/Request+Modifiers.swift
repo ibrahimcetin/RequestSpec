@@ -37,10 +37,17 @@ extension Request {
         var copy = self
         let bodyDict = builder()
 
-        if let bodyDict, let jsonData = try? encoder.encode(bodyDict) {
-            copy.components.body = jsonData
-            copy.components.headers["Content-Type"] = "application/json"
+        if let bodyDict {
+            // Special case: if the body is already Data, use it directly
+            if let bodyData = bodyDict as? Data {
+                copy.components.body = bodyData
+            } else if let jsonData = try? encoder.encode(bodyDict) {
+                copy.components.body = jsonData
+            }
+
+            copy.components.headers["Content-Type"] = "application/json"  // #TODO: Make this dynamic based on the encoder
         }
+
         return copy
     }
 
