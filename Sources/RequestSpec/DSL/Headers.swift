@@ -57,7 +57,7 @@ public struct XApiKey: HeaderProtocol {
     public let key = "X-Api-Key"
     public let value: String
 
-    public init(value: String) {
+    public init(_ value: String) {
         self.value = value
     }
 }
