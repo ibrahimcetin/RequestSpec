@@ -293,4 +293,31 @@ struct RequestIntegrationTests {
         #expect(urlRequest.timeoutInterval == 30)
         #expect(urlRequest.cachePolicy == .reloadIgnoringLocalCacheData)
     }
+
+    @Test("Request builds cURL description correctly")
+    func testCURLDescription() throws {
+        let request = Post<TestResponse>("api", "v1", "users")
+            .headers {
+                Authorization("Bearer token")
+                ContentType("application/json")
+            }
+            .queryItems {
+                Item("format", value: "json")
+            }
+            .body {
+                TestData.jsonData(TestData.sampleUser)
+            }
+
+        let cURLDescription = try request.cURLDescription(baseURL: TestURLs.localhost)
+
+        #expect(
+            cURLDescription == """
+                $ curl -v \\
+                -X POST \\
+                -H "Authorization: Bearer token" \\
+                -H "Content-Type: application/json" \\
+                -d "{\\\"email\\\":\\\"john@example.com\\\",\\\"name\\\":\\\"John Doe\\\"}" \\
+                "http://localhost:8080/api/v1/users?format=json"
+                """)
+    }
 }
