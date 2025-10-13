@@ -10,7 +10,7 @@ import Foundation
 /// Base protocol for all network requests
 public protocol Request: Identifiable {
     /// The response type this request expects
-    associatedtype Response
+    associatedtype Response: Decodable
 
     /// The unique identifier for this request
     var id: UUID { get }
@@ -24,7 +24,7 @@ public protocol Request: Identifiable {
     /// Request components (headers, query items, body, etc.)
     var components: RequestComponents { get set }
 
-    /// Create a GET request with path components
+    /// Create a request with path components
     init(_ pathComponents: String...)
 }
 
