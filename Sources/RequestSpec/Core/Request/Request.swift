@@ -8,7 +8,7 @@
 import Foundation
 
 /// Base protocol for all network requests
-public protocol Request: Identifiable {
+public protocol Request: Identifiable, Sendable {
     /// The response type this request expects
     associatedtype ResponseBody: Decodable
 
