@@ -193,18 +193,6 @@ struct HTTPMethodTests {
         // IDs are generated each time, so they should be different
         #expect(request1.id != request2.id)
     }
-
-    // MARK: - Response Type Tests
-
-    @Test("response() modifier returns same request type")
-    func testResponseModifier() {
-        let request = Get<String>("users")
-            .response(String.self)
-
-        // Request should still have same properties
-        #expect(request.pathComponents == ["users"])
-        #expect(request.method == .get)
-    }
 }
 
 // MARK: - Method Comparison Tests

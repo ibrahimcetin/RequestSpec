@@ -32,12 +32,6 @@ extension Request {
     public var id: UUID { UUID() }
 }
 
-extension Request {
-    public func response(_ response: Response.Type) -> Self {
-        self
-    }
-}
-
 // MARK: - URLRequest Builder
 
 extension Request {
