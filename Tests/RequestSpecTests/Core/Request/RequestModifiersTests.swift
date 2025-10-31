@@ -309,7 +309,7 @@ struct BodyModifierTests {
     }
 
     @Test("body() modifier supports conditional body (only if statement)")
-    func testBodyModifierConditionalBody() {
+    func testBodyModifierConditionalBody() throws {
         let includeBody = true
         let user = TestUser(name: "John", email: "john@example.com")
 
@@ -317,12 +317,11 @@ struct BodyModifierTests {
             .body {
                 if includeBody {
                     user
-                } else {
-                    nil
                 }
             }
 
-        #expect(request.components.body != nil)
+        let data = try #require(request.components.body)
+        #expect(try JSONDecoder().decode(TestUser.self, from: data) == user)
     }
 
     @Test("body() modifier supports conditional body (if-else statement)")
