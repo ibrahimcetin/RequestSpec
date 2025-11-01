@@ -33,8 +33,4 @@ public enum BodyBuilder {
     public static func buildBlock(_ components: (any Encodable)?...) -> (any Encodable)? {
         fatalError()
     }
-
-    //    public static func buildBlock(_ components: [any KeyValuePair & Encodable]...) -> any Encodable {
-    //        components
-    //    }
 }
