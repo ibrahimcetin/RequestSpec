@@ -14,6 +14,12 @@ public struct HTTPResponse<Body> {
     /// The original HTTP response
     public let originalResponse: HTTPURLResponse
 
+    /// Initialize a response with body and original HTTP response
+    public init(body: Body, originalResponse: HTTPURLResponse) {
+        self.body = body
+        self.originalResponse = originalResponse
+    }
+
     /// The status code of the response
     public var statusCode: Int {
         originalResponse.statusCode
