@@ -260,6 +260,24 @@ struct ErrorHandlingTests {
 
 @Suite("Request Integration Tests", .tags(.integration, .urlBuilding))
 struct RequestIntegrationTests {
+    struct SampleRequest: RequestSpec {
+        var body: Post<TestResponse> {
+            Post("api", "v1", "users")
+                .queryItems {
+                    Item("format", value: "json")
+                }
+                .headers {
+                    Authorization("Bearer token")
+                    ContentType("application/json")
+                }
+                .body {
+                    TestData.jsonData(TestData.sampleUser)
+                }
+                .timeout(30)
+                .cachePolicy(.reloadIgnoringLocalCacheData)
+        }
+    }
+
     @Test("Request builds complete URL with all components")
     func testCompleteURLBuilding() throws {
         var request = Post<TestResponse>("api", "v1", "users")
@@ -292,6 +310,10 @@ struct RequestIntegrationTests {
         #expect(urlRequest.httpMethod == "POST")
         #expect(urlRequest.timeoutInterval == 30)
         #expect(urlRequest.cachePolicy == .reloadIgnoringLocalCacheData)
+
+        // Verify RequestSpec version produces the same URLRequest
+        let requestSpecURLRequest = try SampleRequest().urlRequest(baseURL: TestURLs.localhost)
+        #expect(requestSpecURLRequest == urlRequest)
     }
 
     @Test("Request builds cURL description correctly")
