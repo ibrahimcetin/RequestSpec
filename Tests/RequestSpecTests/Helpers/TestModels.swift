@@ -33,6 +33,7 @@ enum TestURLs {
 
 enum TestData {
     static let sampleUser = TestUser(name: "John Doe", email: "john@example.com")
+    static let sampleUserAlternative = TestUser(name: "Joe Doe", email: "joe@example.com")
     static let sampleResponse = TestResponse(message: "Success")
 
     static func jsonData<T: Encodable>(_ value: T) -> Data {

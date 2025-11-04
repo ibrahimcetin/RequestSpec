@@ -324,21 +324,23 @@ struct BodyModifierTests {
         #expect(try JSONDecoder().decode(TestUser.self, from: data) == user)
     }
 
-    @Test("body() modifier supports conditional body (if-else statement)")
-    func testBodyModifierConditionalBodyIfElse() throws {
-        let greeting = "Hello, RequestSpec!"
-
+    @Test(
+        "body() modifier supports conditional body (if-else statement)",
+        arguments: [(true, TestData.sampleUser), (false, TestData.sampleUserAlternative)],
+    )
+    func testBodyModifierConditionalBodyIfElse(condition: Bool, expected: TestUser) throws {
         let request = Post<TestResponse>("users")
             .body {
-                if false {
-                    TestUser(name: "John", email: "john@example.com")
+                if condition {
+                    TestData.sampleUser
                 } else {
-                    greeting
+                    TestData.sampleUserAlternative
                 }
             }
 
         let data = try #require(request.components.body)
-        #expect(try JSONDecoder().decode(String.self, from: data) == greeting)
+        let decoded = try JSONDecoder().decode(TestUser.self, from: data)
+        #expect(decoded == expected)
     }
 
     @Test("body() modifier uses custom encoder")
