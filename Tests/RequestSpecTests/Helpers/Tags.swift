@@ -14,4 +14,6 @@ extension Tag {
     @Tag static var modifiers: Self
     @Tag static var httpMethods: Self
     @Tag static var dsl: Self
+    @Tag static var networkService: Self
+    @Tag static var response: Self
 }
