@@ -26,8 +26,12 @@ public struct HTTPResponse<Body> {
     }
 
     /// The headers of the response
-    public var headers: [AnyHashable: Any] {
-        originalResponse.allHeaderFields
+    public var headers: [String: String] {
+        originalResponse.allHeaderFields.reduce(into: [:]) { result, pair in
+            if let key = pair.key as? String, let value = pair.value as? String {
+                result[key] = value
+            }
+        }
     }
 }
 
