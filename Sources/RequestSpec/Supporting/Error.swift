@@ -5,8 +5,6 @@
 //  Created by İbrahim Çetin on 8.10.2025.
 //
 
-public enum RequestError: Error {
-    case invalidBaseURL
+public enum RequestSpecError: Error, Sendable {
     case invalidURL
-    case invalidURLRequest
 }

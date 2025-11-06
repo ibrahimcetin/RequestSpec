@@ -42,7 +42,7 @@ extension Request {
     public func urlRequest(baseURL: URL) throws -> URLRequest {
         // Build URL
         guard var urlComponents = URLComponents(url: baseURL, resolvingAgainstBaseURL: false) else {
-            throw RequestError.invalidBaseURL
+            throw RequestSpecError.invalidURL
         }
 
         // Build path
@@ -55,7 +55,7 @@ extension Request {
         }
 
         guard let url = urlComponents.url else {
-            throw RequestError.invalidURL
+            throw RequestSpecError.invalidURL
         }
 
         // Create URLRequest
@@ -77,11 +77,10 @@ extension Request {
 
 extension Request {
     public func cURLDescription(baseURL: URL) throws -> String {
-        guard
-            let request = try? urlRequest(baseURL: baseURL),
-            let url = request.url,
-            let method = request.httpMethod
-        else { throw RequestError.invalidURLRequest }
+        let request = try urlRequest(baseURL: baseURL)
+
+        guard let url = request.url, let method = request.httpMethod
+        else { throw RequestSpecError.invalidURL }
 
         var components = ["$ curl -v"]
 
