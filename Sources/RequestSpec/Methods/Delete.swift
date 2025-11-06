@@ -10,6 +10,9 @@ public protocol DeleteRequest: Request {}
 
 /// A DELETE request for deleting resources
 public struct Delete<ResponseBody: Decodable>: DeleteRequest {
+    /// The unique identifier for this request
+    public let id: UUID = UUID()
+
     /// HTTP method (always DELETE)
     public let method: HTTPMethod = .delete
 

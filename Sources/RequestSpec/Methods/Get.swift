@@ -10,6 +10,9 @@ public protocol GetRequest: Request {}
 
 /// A GET request for retrieving resources
 public struct Get<ResponseBody: Decodable>: GetRequest {
+    /// The unique identifier for this request
+    public let id: UUID = UUID()
+
     /// HTTP method (always GET)
     public let method: HTTPMethod = .get
 

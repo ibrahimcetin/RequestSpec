@@ -10,6 +10,9 @@ public protocol OptionsRequest: Request {}
 
 /// A OPTIONS request for checking resources
 public struct Options<ResponseBody: Decodable>: OptionsRequest {
+    /// The unique identifier for this request
+    public let id: UUID = UUID()
+
     /// HTTP method (always OPTIONS)
     public let method: HTTPMethod = .options
 

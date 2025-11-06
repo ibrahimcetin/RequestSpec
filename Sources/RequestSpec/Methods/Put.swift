@@ -10,6 +10,9 @@ public protocol PutRequest: Request {}
 
 /// A PUT request for updating resources
 public struct Put<ResponseBody: Decodable>: PutRequest {
+    /// The unique identifier for this request
+    public let id: UUID = UUID()
+
     /// HTTP method (always PUT)
     public let method: HTTPMethod = .put
 

@@ -10,6 +10,9 @@ public protocol PatchRequest: Request {}
 
 /// A PATCH request for updating resources
 public struct Patch<ResponseBody: Decodable>: PatchRequest {
+    /// The unique identifier for this request
+    public let id: UUID = UUID()
+
     /// HTTP method (always PATCH)
     public let method: HTTPMethod = .patch
 

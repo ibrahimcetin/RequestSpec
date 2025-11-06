@@ -10,6 +10,9 @@ public protocol HeadRequest: Request {}
 
 /// A HEAD request for checking resources
 public struct Head<ResponseBody: Decodable>: HeadRequest {
+    /// The unique identifier for this request
+    public let id: UUID = UUID()
+
     /// HTTP method (always HEAD)
     public let method: HTTPMethod = .head
 

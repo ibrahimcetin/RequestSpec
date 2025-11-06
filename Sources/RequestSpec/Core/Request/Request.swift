@@ -28,10 +28,6 @@ public protocol Request: Identifiable, Sendable {
     init(_ pathComponents: String...)
 }
 
-extension Request {
-    public var id: UUID { UUID() }
-}
-
 // MARK: - URLRequest Builder
 
 extension Request {

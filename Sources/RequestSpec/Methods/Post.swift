@@ -10,6 +10,9 @@ public protocol PostRequest: Request {}
 
 /// A POST request for creating resources
 public struct Post<ResponseBody: Decodable>: PostRequest {
+    /// The unique identifier for this request
+    public let id: UUID = UUID()
+
     /// HTTP method (always POST)
     public let method: HTTPMethod = .post
 
