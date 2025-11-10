@@ -1,5 +1,9 @@
 # RequestSpec
 
+[![](https://github.com/ibrahimcetin/RequestSpec/actions/workflows/swift.yml/badge.svg)](https://github.com/ibrahimcetin/RequestSpec/actions/workflows/swift.yml)
+[![](https://img.shields.io/endpoint?url=https%3A%2F%2Fswiftpackageindex.com%2Fapi%2Fpackages%2Fibrahimcetin%2FRequestSpec%2Fbadge%3Ftype%3Dswift-versions)](https://swiftpackageindex.com/ibrahimcetin/RequestSpec)
+[![](https://img.shields.io/endpoint?url=https%3A%2F%2Fswiftpackageindex.com%2Fapi%2Fpackages%2Fibrahimcetin%2FRequestSpec%2Fbadge%3Ftype%3Dplatforms)](https://swiftpackageindex.com/ibrahimcetin/RequestSpec)
+
 RequestSpec is a lightweight Swift library that provides a fluent, declarative API for building HTTP requests, making your networking code more **maintainable**, **organized**, and **testable**. It is built on top of `URLRequest` and fully **interoperable** with existing libraries such as [`URLSession`](https://developer.apple.com/documentation/foundation/urlsession), [`Alamofire`](https://github.com/Alamofire/Alamofire) and more. You can easily integrate it into your existing network layer.
 
 ```swift
