@@ -21,7 +21,7 @@ public protocol NetworkService {
     func send<R: Request>(_ request: R) async throws -> HTTPResponse<R.ResponseBody>
 
     /// Send a request spec and return the response
-    func send<RS: RequestSpec>(_ requestSpec: RS) async throws -> HTTPResponse<RS.Body.ResponseBody>
+    func send<RS: RequestSpec>(_ requestSpec: RS) async throws -> HTTPResponse<RS.ResponseBody>
 }
 
 extension NetworkService {
@@ -57,7 +57,7 @@ extension NetworkService {
         return HTTPResponse(body: body, originalResponse: response as! HTTPURLResponse)
     }
 
-    public func send<RS: RequestSpec>(_ requestSpec: RS) async throws -> HTTPResponse<RS.Body.ResponseBody> {
+    public func send<RS: RequestSpec>(_ requestSpec: RS) async throws -> HTTPResponse<RS.ResponseBody> {
         try await send(requestSpec.body)
     }
 }

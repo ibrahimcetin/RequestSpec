@@ -12,7 +12,7 @@ public protocol RequestSpec: Sendable {
     /// The type of request body
     associatedtype Body: Request
 
-    /// The body of the request
+    associatedtype ResponseBody where ResponseBody == Body.ResponseBody
     var body: Body { get }
 }
 
