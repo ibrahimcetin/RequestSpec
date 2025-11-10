@@ -35,6 +35,10 @@ public struct HTTPResponse<Body> {
     }
 }
 
+// MARK: - Sendable
+
+extension HTTPResponse: Sendable where Body: Sendable {}
+
 // MARK: - HTTP Response Status
 
 /// HTTP response status categories
