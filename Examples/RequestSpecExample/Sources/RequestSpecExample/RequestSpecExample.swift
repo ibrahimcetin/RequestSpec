@@ -18,6 +18,7 @@
  │ • GET, POST, PUT, PATCH, DELETE operations                                     │
  │ • Working with path parameters (/posts/1)                                      │
  │ • Working with query parameters (?userId=1)                                    │
+ │ • Conditional modifiers (if/else in headers & query items) 🌟                  │
  │ • Nested routes (/posts/1/comments)                                            │
  │ • Request/response models with proper Codable mapping                          │
  │ • Protocol-based service architecture for testability                          │
@@ -38,6 +39,7 @@
  │ 🌐 REQUEST DEFINITIONS                                                          │
  │    • RequestSpec implementations       → Lines ~810-1265                       │
  │    • Abstract template included        → Lines ~835-873                        │
+ │    • Conditional request definitions   → Lines ~1265-1300                       │
  │                                                                                 │
  └─────────────────────────────────────────────────────────────────────────────────┘
 
@@ -479,7 +481,13 @@ final class JSONPlaceholderService: JSONPlaceholderServiceProtocol {
     }
 
     func createComment(_ input: CreateCommentInput) async throws -> Comment {
-        let response = try await send(CreateCommentRequest(input: input))
+        let response = try await send(
+            CreateCommentRequest(
+                input: input,
+                authToken: "sample-token-123",  // Example: Could be nil for unauthenticated requests
+                includeMetadata: true,  // Example: Request metadata in response
+                isPriority: false  // Example: Normal priority comment
+            ))
         return response.body
     }
 
@@ -1003,6 +1011,19 @@ struct DeletePostRequest: RequestSpec {
 // MARK: - Comment Requests
 
 /*
+ ═══════════════════════════════════════════════════════════════════
+ 🌟 FEATURED: Conditional Modifiers Example
+ ═══════════════════════════════════════════════════════════════════
+
+ The CreateCommentRequest below demonstrates how to use if/else statements
+ in modifier builders (.headers, .queryItems) to conditionally include
+ headers and query parameters based on runtime values.
+
+ This is one of RequestSpec's most powerful features for building flexible,
+ reusable request definitions!
+
+ ───────────────────────────────────────────────────────────────────
+
  The remaining request definitions follow the same patterns shown above:
  • Path parameters (id in URL)
  • Query parameters (?key=value)
@@ -1036,8 +1057,22 @@ struct GetCommentRequest: RequestSpec {
     }
 }
 
+/// POST /comments - Creates a new comment
+///
+/// This example demonstrates **conditional modifiers** - how to use if/else statements
+/// within modifier builders like .headers { } and .queryItems { }.
+///
+/// ## Conditional Modifiers Pattern
+///
+/// You can use Swift's control flow (if, if-let, switch, loops) inside builder closures
+/// to conditionally add headers, query items, or body parameters based on runtime values:
+///
+/// This makes your requests flexible and type-safe without needing multiple request definitions.
 struct CreateCommentRequest: RequestSpec {
     let input: CreateCommentInput
+    let authToken: String?  // Optional authentication token
+    let includeMetadata: Bool  // Whether to include metadata in response
+    let isPriority: Bool  // Whether this is a priority comment
 
     var body: Post<Comment> {
         Post("comments")
@@ -1048,6 +1083,24 @@ struct CreateCommentRequest: RequestSpec {
                 ContentType("application/json")
                 Accept("application/json")
                 UserAgent("RequestSpec/1.0")
+
+                // Conditionally add Authorization header if token is provided
+                if let token = authToken {
+                    Authorization("Bearer \(token)")
+                }
+            }
+            .queryItems {
+                // Conditionally add metadata query parameter
+                if includeMetadata {
+                    Item("include", value: "metadata")
+                }
+
+                // Use if-else to set priority level
+                if isPriority {
+                    Item("priority", value: "high")
+                } else {
+                    Item("priority", value: "normal")
+                }
             }
             .timeout(10)
     }
