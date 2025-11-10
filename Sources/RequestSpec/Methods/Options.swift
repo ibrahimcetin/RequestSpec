@@ -5,24 +5,46 @@
 //  Created by İbrahim Çetin on 8.10.2025.
 //
 
-/// A protocol for OPTIONS requests
+/// A protocol that marks a request as an OPTIONS request.
+///
+/// This protocol extends ``Request`` and is used for type constraints and identification
+/// of OPTIONS requests in the library.
 public protocol OptionsRequest: Request {}
 
-/// A OPTIONS request for checking resources
+/// An OPTIONS request for discovering communication options for a resource.
+///
+/// `Options` represents an HTTP OPTIONS request used to describe the communication options
+/// available for a target resource. This is commonly used for CORS (Cross-Origin Resource Sharing)
+/// preflight requests to determine what HTTP methods and headers are allowed.
+///
+/// - Note: OPTIONS requests typically return information in the response headers (like `Allow`,
+///   `Access-Control-Allow-Methods`, etc.). Use `Data` or `String` as the `ResponseBody` type.
+///
+/// - SeeAlso:
+///   - ``Request``
+///   - ``HTTPResponse``
+///   - ``NetworkService``
 public struct Options<ResponseBody: Decodable>: OptionsRequest {
-    /// The unique identifier for this request
+    /// The unique identifier for this request instance.
     public let id: UUID = UUID()
 
-    /// HTTP method (always OPTIONS)
+    /// The HTTP method for this request (always `.options`).
     public let method: HTTPMethod = .options
 
-    /// Path components for building the URL
+    /// The path components that form the URL path.
+    ///
+    /// These components are joined with "/" to construct the request path.
     public let pathComponents: [String]
 
-    /// Request components (headers, query items, etc.)
+    /// The configuration components for this request.
+    ///
+    /// Contains headers, query items, body, timeout, and other request settings.
     public var components: RequestComponents
 
-    /// Create a OPTIONS request with path components
+    /// Creates an OPTIONS request with the specified path components.
+    ///
+    /// - Parameter pathComponents: Variadic string parameters that form the URL path.
+    ///   For example, `Options<Data>("users")` creates a request to `/users`.
     public init(_ pathComponents: String...) {
         self.pathComponents = pathComponents
         self.components = RequestComponents()

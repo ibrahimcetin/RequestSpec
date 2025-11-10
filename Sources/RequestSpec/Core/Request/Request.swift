@@ -7,34 +7,101 @@
 
 import Foundation
 
-/// Base protocol for all network requests
+/// The base protocol for all HTTP network requests.
+///
+/// `Request` defines the structure and behavior for making HTTP requests in a type-safe, composable way.
+/// Rather than conforming to this protocol directly, you typically use the concrete request types like
+/// ``Get``, ``Post``, ``Put``, ``Patch``, or ``Delete``, which implement this protocol with specific HTTP methods.
+///
+/// ## Usage
+///
+/// ```swift
+/// // Create a GET request with path components
+/// let getUserRequest = Get<User>("users", "42")
+///
+/// // Build a POST request with headers, query items, body, and timeout
+/// let createUserRequest = Post<User>("users")
+///     .headers {
+///         Authorization("Bearer token123")
+///         ContentType("application/json")
+///         Accept("application/json")
+///     }
+///     .queryItems {
+///         Item("notify", value: "true")
+///         Item("source", value: "mobile")
+///     }
+///     .body {
+///         CreateUserInput(name: "John Doe", email: "john@example.com")
+///     }
+///     .timeout(30)
+///
+/// // Send the request using NetworkService
+/// let response = try await networkService.send(createUserRequest)
+/// print("Created user: \(response.body.name)")
+/// ```
+///
+/// - Note: For production applications, it's recommended to wrap your requests in ``RequestSpec``
+///   to create reusable, parameterized request definitions.
+///
+/// - SeeAlso:
+///   - ``RequestSpec``
+///   - ``Get``
+///   - ``Post``
+///   - ``Put``
+///   - ``Patch``
+///   - ``Delete``
+///   - ``NetworkService``
 public protocol Request: Identifiable, Sendable {
-    /// The response type this request expects
+    /// The type of the decoded response body this request expects.
+    ///
+    /// This associatedtype determines what type will be decoded from the HTTP response body.
+    /// It must conform to `Decodable` to support automatic decoding.
+    ///
+    /// - Note: Use `Data` as the response type if you don't want automatic decoding
+    ///   e.g., `Get<Data>("endpoint")`.
     associatedtype ResponseBody: Decodable
 
-    /// The unique identifier for this request
+    /// A unique identifier for this request instance.
+    ///
+    /// Each request has a unique ID that can be used for tracking, logging, or request management.
     var id: UUID { get }
 
-    /// The HTTP method for this request
+    /// The HTTP method for this request (e.g., GET, POST, PUT, DELETE).
+    ///
+    /// - SeeAlso: ``HTTPMethod``
     var method: HTTPMethod { get }
 
-    /// Path components for the request URL
+    /// The path components that make up the request URL path.
+    ///
+    /// These components are joined with "/" to form the request path. For example,
+    /// `["users", "42", "profile"]` becomes `/users/42/profile`.
     var pathComponents: [String] { get }
 
-    /// Request components (headers, query items, body, etc.)
+    /// The configuration components for this request.
+    ///
+    /// This includes headers, query items, body data, timeout, cache policy, and other request settings.
+    ///
+    /// - SeeAlso: ``RequestComponents``
     var components: RequestComponents { get set }
 
-    /// Create a request with path components
+    /// Creates a request with the specified path components.
+    ///
+    /// - Parameter pathComponents: Variadic string parameters that form the URL path
     init(_ pathComponents: String...)
 }
 
 // MARK: - URLRequest Builder
 
 extension Request {
-    /// Build a URLRequest from this request and a base URL
-    /// - Parameter baseURL: The base URL
-    /// - Returns: A configured URLRequest
-    /// - Throws:  Any error thrown while constructing the `URLRequest`.
+    /// Builds a `URLRequest` from this request and a base URL.
+    ///
+    /// This method constructs a complete `URLRequest` by combining the base URL with the request's
+    /// path components, query items, headers, body, and other configuration settings. The resulting
+    /// `URLRequest` can be used with `URLSession` or other networking libraries.
+    ///
+    /// - Parameter baseURL: The base URL to which the request path will be appended
+    /// - Returns: A fully configured `URLRequest` ready to be executed
+    /// - Throws: ``RequestSpecError/invalidURL`` if the URL cannot be constructed from the components
     public func urlRequest(baseURL: URL) throws(RequestSpecError) -> URLRequest {
         // Build URL
         guard var urlComponents = URLComponents(url: baseURL, resolvingAgainstBaseURL: false) else {
@@ -72,6 +139,27 @@ extension Request {
 }
 
 extension Request {
+    /// Generates a cURL command string representation of this request.
+    ///
+    /// This method creates a cURL command that can be copied and executed in a terminal to replicate
+    /// the request. This is useful for debugging, sharing requests with others, or testing APIs manually.
+    ///
+    /// The generated command includes the HTTP method, headers, body data, and full URL.
+    ///
+    /// ## Example Output
+    ///
+    /// ```bash
+    /// $ curl -v \
+    /// -X POST \
+    /// -H "Authorization: Bearer token123" \
+    /// -H "Content-Type: application/json" \
+    /// -d "{\"name\":\"John\",\"email\":\"john@example.com\"}" \
+    /// "https://api.example.com/users"
+    /// ```
+    ///
+    /// - Parameter baseURL: The base URL to construct the full request URL
+    /// - Returns: A formatted cURL command string
+    /// - Throws: ``RequestSpecError/invalidURL`` if the URL cannot be constructed
     public func cURLDescription(baseURL: URL) throws(RequestSpecError) -> String {
         let request = try urlRequest(baseURL: baseURL)
 
