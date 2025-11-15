@@ -72,7 +72,7 @@ struct HeadersModifierTests {
         struct User: RequestSpec {
             let useAuthToken: Bool
 
-            var body: Get<String> {
+            var request: Get<String> {
                 Get("users")
                     .headers {
                         if useAuthToken {
@@ -85,12 +85,12 @@ struct HeadersModifierTests {
         }
 
         let requestWithToken = User(useAuthToken: true)
-        #expect(requestWithToken.body.components.headers.count == 1)
-        #expect(requestWithToken.body.components.headers["Authorization"] == "Bearer token")
+        #expect(requestWithToken.request.components.headers.count == 1)
+        #expect(requestWithToken.request.components.headers["Authorization"] == "Bearer token")
 
         let requestWithAnonymous = User(useAuthToken: false)
-        #expect(requestWithAnonymous.body.components.headers.count == 1)
-        #expect(requestWithAnonymous.body.components.headers["X-Anonymous"] == "true")
+        #expect(requestWithAnonymous.request.components.headers.count == 1)
+        #expect(requestWithAnonymous.request.components.headers["X-Anonymous"] == "true")
     }
 
     @Test("headers() modifier supports loops")
@@ -220,7 +220,7 @@ struct QueryItemsModifierTests {
         struct User: RequestSpec {
             let includeFilter: Bool
 
-            var body: Get<String> {
+            var request: Get<String> {
                 Get("users")
                     .queryItems {
                         Item("page", value: "1")
@@ -234,14 +234,14 @@ struct QueryItemsModifierTests {
         }
 
         let requestWithFilter = User(includeFilter: true)
-        #expect(requestWithFilter.body.components.queryItems.count == 2)
-        #expect(requestWithFilter.body.components.queryItems[1].name == "filter")
-        #expect(requestWithFilter.body.components.queryItems[1].value == "active")
+        #expect(requestWithFilter.request.components.queryItems.count == 2)
+        #expect(requestWithFilter.request.components.queryItems[1].name == "filter")
+        #expect(requestWithFilter.request.components.queryItems[1].value == "active")
 
         let requestWithoutFilter = User(includeFilter: false)
-        #expect(requestWithoutFilter.body.components.queryItems.count == 2)
-        #expect(requestWithoutFilter.body.components.queryItems[1].name == "filter")
-        #expect(requestWithoutFilter.body.components.queryItems[1].value == "inactive")
+        #expect(requestWithoutFilter.request.components.queryItems.count == 2)
+        #expect(requestWithoutFilter.request.components.queryItems[1].name == "filter")
+        #expect(requestWithoutFilter.request.components.queryItems[1].value == "inactive")
     }
 
     @Test("queryItems() modifier supports loops")

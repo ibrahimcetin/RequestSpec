@@ -6,6 +6,9 @@
 
 RequestSpec is a lightweight Swift library that provides a fluent, declarative API for building HTTP requests, making your networking code more **maintainable**, **organized**, and **testable**. It is built on top of `URLRequest` and fully **interoperable** with existing libraries such as [`URLSession`](https://developer.apple.com/documentation/foundation/urlsession), [`Alamofire`](https://github.com/Alamofire/Alamofire) and more. You can easily integrate it into your existing network layer.
 
+> [!WARNING]
+> **📢 Migrating from 0.1.x?** The `RequestSpec.body` property has been renamed to `request` in 0.2.0 for better clarity. Just rename `body` to `request` in your RequestSpec implementations and you're good to go.
+
 ```swift
 import RequestSpec
 
@@ -14,7 +17,7 @@ struct GetUserRequest: RequestSpec {
     let authToken: String?
     let includeFields: [String]
 
-    var body: Get<User> {
+    var request: Get<User> {
         Get("users", "\(userId)")
             .headers {
                 ContentType("application/json")
@@ -129,7 +132,7 @@ import RequestSpec
 struct GetUserRequest: RequestSpec {
     let userId: Int
 
-    var body: Get<User> {
+    var request: Get<User> {
         Get("users", "\(userId)")
             .headers {
                 Authorization("Bearer \(token)")
@@ -246,9 +249,9 @@ public protocol Request: Identifiable, Sendable {
 
 ```swift
 public protocol RequestSpec: Sendable {
-    associatedtype Body: Request
+    associatedtype RequestType: Request
 
-    var body: Body { get }
+    var request: RequestType { get }
 }
 ```
 
@@ -257,7 +260,7 @@ public protocol RequestSpec: Sendable {
 - Allows you to add stored properties (parameters, configuration)
 - Provides a clean abstraction for complex requests
 - Can have custom initializers and computed properties
-- The `body` property generates the actual `Request`
+- The `request` property generates the actual `Request`
 
 **When to use each:**
 
@@ -286,7 +289,7 @@ let response = try await service.send(
 struct GetUserRequest: RequestSpec {
     let userId: String
 
-    var body: Get<User> {
+    var request: Get<User> {
         Get("users", userId)
     }
 }
@@ -323,7 +326,7 @@ struct Post: Codable {
 struct CreatePostRequest: RequestSpec {
     let input: CreatePostInput
 
-    var body: Post<Post> {
+    var request: Post<Post> {
         Post("posts")
             .body {
                 input
@@ -436,7 +439,7 @@ struct CreateCommentRequest: RequestSpec {
     let tags: [String]
     let customHeaders: [String: String]
 
-    var body: Post<Comment> {
+    var request: Post<Comment> {
         Post("comments")
             .headers {
                 ContentType("application/json")
@@ -518,7 +521,7 @@ If you want to use RequestSpec in a Swift Package Manager package, add it as a d
 
 ```swift
 dependencies: [
-    .package(url: "https://github.com/ibrahimcetin/RequestSpec", from: "0.1.0")
+    .package(url: "https://github.com/ibrahimcetin/RequestSpec", from: "0.2.0")
 ]
 ```
 

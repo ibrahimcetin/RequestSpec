@@ -36,7 +36,7 @@ import Foundation
 ///     let includeMetadata: Bool
 ///
 ///     // Notice: Post<Comment> means "POST request that returns a Comment"
-///     var body: Post<Comment> {
+///     var request: Post<Comment> {
 ///         Post("comments")
 ///             .headers {
 ///                 ContentType("application/json")
@@ -80,13 +80,13 @@ public protocol RequestSpec: Sendable {
     ///     - ``Put``
     ///     - ``Patch``
     ///     - ``Delete``
-    associatedtype Body: Request
+    associatedtype RequestType: Request
 
     /// The underlying request that defines the actual HTTP request structure.
     ///
     /// This property is typically computed, allowing you to construct the ``Request`` using
     /// the spec's stored properties as parameters for paths, headers, query items, or body data.
-    var body: Body { get }
+    var request: RequestType { get }
 }
 
 // MARK: - Helpers
@@ -100,12 +100,12 @@ extension RequestSpec {
     ///
     /// - Note: This is a shortcut for ``Request/urlRequest(baseURL:)`` method.
     public func urlRequest(baseURL: URL) throws(RequestSpecError) -> URLRequest {
-        try self.body.urlRequest(baseURL: baseURL)
+        try self.request.urlRequest(baseURL: baseURL)
     }
 
-    /// The expected response type of the underlying request
+    /// The expected response type of the underlying request.
     ///
-    /// This typealias is a **shorthand** for `Body.ResponseBody`, letting you
+    /// This typealias is a **shorthand** for `RequestType.ResponseBody`, letting you
     /// refer directly to the return type of the underlying request.
-    public typealias ResponseBody = Body.ResponseBody
+    public typealias ResponseBody = RequestType.ResponseBody
 }

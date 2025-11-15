@@ -184,7 +184,7 @@ struct GetPostRequest: RequestSpec {
     /// However, it isn't completely useless, you may use that type as shown in the first example.
     ///
     /// If you don't want to specify it, you may use ``Data`` type instead.
-    var body: Get<BlogPost> {
+    var request: Get<BlogPost> {
         Get("posts", "\(id)")
             .headers {
                 Accept("application/json")
@@ -206,7 +206,7 @@ struct CreatePostRequest: RequestSpec {
     /// This example demonstrates if-else usage in modifiers:
     /// - Conditionally adding headers based on optional values
     /// - Conditionally adding query items based on boolean flags
-    var body: Post<BlogPost> {
+    var request: Post<BlogPost> {
         Post("posts")
             .body(encoder: JSONEncoder()) {
                 input

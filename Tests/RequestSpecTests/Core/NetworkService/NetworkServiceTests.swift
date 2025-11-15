@@ -29,7 +29,7 @@ protocol EchoServiceProtocol: NetworkService {
 struct GetEchoRequest: RequestSpec {
     let id: String
 
-    var body: Get<Echo> {
+    var request: Get<Echo> {
         Get("anything", "echo")
             .headers {
                 Authorization("Bearer token")
@@ -45,7 +45,7 @@ struct GetEchoRequest: RequestSpec {
 struct PostEchoRequest: RequestSpec {
     let data: any Encodable & Sendable
 
-    var body: Post<Echo> {
+    var request: Post<Echo> {
         Post("anything", "echo")
             .headers {
                 ContentType("application/json")
@@ -62,7 +62,7 @@ struct PostEchoRequest: RequestSpec {
 struct DeleteEchoRequest: RequestSpec {
     let id: String
 
-    var body: Delete<Echo> {
+    var request: Delete<Echo> {
         Delete("anything", "echo")
             .headers {
                 ContentType("application/json")

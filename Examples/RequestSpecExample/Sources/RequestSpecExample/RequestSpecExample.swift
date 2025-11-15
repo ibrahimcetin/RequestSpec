@@ -783,9 +783,9 @@ struct CreateTodoInput: Codable {
 
  Each struct conforms to RequestSpec and defines ONE specific API request.
 
- Anatomy of a request:
+ Anatomy of a request spec:
  1. Struct holds any parameters (ID, filters, input data, etc.)
- 2. The `body` property defines:
+ 2. The `request` property defines:
     • HTTP method (Get, Post, Put, Patch, Delete)
     • Response type (what we expect back)
     • URL path segments
@@ -809,7 +809,7 @@ struct CreateTodoInput: Codable {
      let inputData: SomeInputModel?
 
      -- 2. Define the request body --
-     var body: HTTPMethod<ResponseType> {
+     var request: HTTPMethod<ResponseType> {
          HTTPMethod("path", "segments")  // e.g., Get, Post, Put, Patch, Delete
              .queryItems {  // Optional: for ?key=value in URL
                  Item("key", value: "value")
@@ -847,7 +847,7 @@ struct CreateTodoInput: Codable {
 /// • Use HTTP GET method
 /// • Expect an array of BlogPost objects back
 struct GetPostsRequest: RequestSpec {
-    var body: Get<[BlogPost]> {
+    var request: Get<[BlogPost]> {
         Get("posts")  // URL path segment
             .headers {
                 Accept("application/json")  // Tell server we want JSON
@@ -866,7 +866,7 @@ struct GetPostsRequest: RequestSpec {
 struct GetPostRequest: RequestSpec {
     let id: Int  // Store the parameter
 
-    var body: Get<BlogPost> {
+    var request: Get<BlogPost> {
         Get("posts", "\(id)")  // Build path: posts/1, posts/2, etc.
             .headers {
                 Accept("application/json")
@@ -885,7 +885,7 @@ struct GetPostRequest: RequestSpec {
 struct GetPostCommentsRequest: RequestSpec {
     let postID: Int
 
-    var body: Get<[Comment]> {
+    var request: Get<[Comment]> {
         // Multiple path segments create nested routes
         Get("posts", "\(postID)", "comments")
             .headers {
@@ -905,7 +905,7 @@ struct GetPostCommentsRequest: RequestSpec {
 struct GetUserPostsRequest: RequestSpec {
     let userID: Int
 
-    var body: Get<[BlogPost]> {
+    var request: Get<[BlogPost]> {
         Get("posts")
             .queryItems {
                 // This becomes ?userId=1 in the URL
@@ -933,7 +933,7 @@ struct GetUserPostsRequest: RequestSpec {
 struct CreatePostRequest: RequestSpec {
     let input: CreatePostInput  // Data to send
 
-    var body: Post<BlogPost> {
+    var request: Post<BlogPost> {
         Post("posts")
             .body {
                 input  // This gets JSON-encoded automatically!
@@ -955,7 +955,7 @@ struct UpdatePostRequest: RequestSpec {
     let id: Int
     let input: UpdatePostInput
 
-    var body: Put<BlogPost> {
+    var request: Put<BlogPost> {
         Put("posts", "\(id)")
             .body {
                 input
@@ -978,7 +978,7 @@ struct PatchPostRequest: RequestSpec {
     let id: Int
     let input: PatchPostInput
 
-    var body: Patch<BlogPost> {
+    var request: Patch<BlogPost> {
         Patch("posts", "\(id)")
             .body {
                 input
@@ -999,7 +999,7 @@ struct PatchPostRequest: RequestSpec {
 struct DeletePostRequest: RequestSpec {
     let id: Int
 
-    var body: Delete<Data> {
+    var request: Delete<Data> {
         Delete("posts", "\(id)")
             .headers {
                 UserAgent("RequestSpec/1.0")
@@ -1034,7 +1034,7 @@ struct DeletePostRequest: RequestSpec {
  */
 
 struct GetCommentsRequest: RequestSpec {
-    var body: Get<[Comment]> {
+    var request: Get<[Comment]> {
         Get("comments")
             .headers {
                 Accept("application/json")
@@ -1047,7 +1047,7 @@ struct GetCommentsRequest: RequestSpec {
 struct GetCommentRequest: RequestSpec {
     let id: Int
 
-    var body: Get<Comment> {
+    var request: Get<Comment> {
         Get("comments", "\(id)")
             .headers {
                 Accept("application/json")
@@ -1074,7 +1074,7 @@ struct CreateCommentRequest: RequestSpec {
     let includeMetadata: Bool  // Whether to include metadata in response
     let isPriority: Bool  // Whether this is a priority comment
 
-    var body: Post<Comment> {
+    var request: Post<Comment> {
         Post("comments")
             .body {
                 input
@@ -1109,7 +1109,7 @@ struct CreateCommentRequest: RequestSpec {
 // MARK: - Album Requests
 
 struct GetAlbumsRequest: RequestSpec {
-    var body: Get<[Album]> {
+    var request: Get<[Album]> {
         Get("albums")
             .headers {
                 Accept("application/json")
@@ -1122,7 +1122,7 @@ struct GetAlbumsRequest: RequestSpec {
 struct GetAlbumRequest: RequestSpec {
     let id: Int
 
-    var body: Get<Album> {
+    var request: Get<Album> {
         Get("albums", "\(id)")
             .headers {
                 Accept("application/json")
@@ -1135,7 +1135,7 @@ struct GetAlbumRequest: RequestSpec {
 struct GetAlbumPhotosRequest: RequestSpec {
     let albumID: Int
 
-    var body: Get<[Photo]> {
+    var request: Get<[Photo]> {
         Get("albums", "\(albumID)", "photos")
             .headers {
                 Accept("application/json")
@@ -1148,7 +1148,7 @@ struct GetAlbumPhotosRequest: RequestSpec {
 struct GetUserAlbumsRequest: RequestSpec {
     let userID: Int
 
-    var body: Get<[Album]> {
+    var request: Get<[Album]> {
         Get("albums")
             .queryItems {
                 Item("userId", value: "\(userID)")
@@ -1164,7 +1164,7 @@ struct GetUserAlbumsRequest: RequestSpec {
 // MARK: - Photo Requests
 
 struct GetPhotosRequest: RequestSpec {
-    var body: Get<[Photo]> {
+    var request: Get<[Photo]> {
         Get("photos")
             .headers {
                 Accept("application/json")
@@ -1177,7 +1177,7 @@ struct GetPhotosRequest: RequestSpec {
 struct GetPhotoRequest: RequestSpec {
     let id: Int
 
-    var body: Get<Photo> {
+    var request: Get<Photo> {
         Get("photos", "\(id)")
             .headers {
                 Accept("application/json")
@@ -1190,7 +1190,7 @@ struct GetPhotoRequest: RequestSpec {
 // MARK: - Todo Requests
 
 struct GetTodosRequest: RequestSpec {
-    var body: Get<[Todo]> {
+    var request: Get<[Todo]> {
         Get("todos")
             .headers {
                 Accept("application/json")
@@ -1203,7 +1203,7 @@ struct GetTodosRequest: RequestSpec {
 struct GetTodoRequest: RequestSpec {
     let id: Int
 
-    var body: Get<Todo> {
+    var request: Get<Todo> {
         Get("todos", "\(id)")
             .headers {
                 Accept("application/json")
@@ -1216,7 +1216,7 @@ struct GetTodoRequest: RequestSpec {
 struct CreateTodoRequest: RequestSpec {
     let input: CreateTodoInput
 
-    var body: Post<Todo> {
+    var request: Post<Todo> {
         Post("todos")
             .body {
                 input
@@ -1233,7 +1233,7 @@ struct CreateTodoRequest: RequestSpec {
 struct GetUserTodosRequest: RequestSpec {
     let userID: Int
 
-    var body: Get<[Todo]> {
+    var request: Get<[Todo]> {
         Get("todos")
             .queryItems {
                 Item("userId", value: "\(userID)")
@@ -1249,7 +1249,7 @@ struct GetUserTodosRequest: RequestSpec {
 // MARK: - User Requests
 
 struct GetUsersRequest: RequestSpec {
-    var body: Get<[User]> {
+    var request: Get<[User]> {
         Get("users")
             .headers {
                 Accept("application/json")
@@ -1262,7 +1262,7 @@ struct GetUsersRequest: RequestSpec {
 struct GetUserRequest: RequestSpec {
     let id: Int
 
-    var body: Get<User> {
+    var request: Get<User> {
         Get("users", "\(id)")
             .headers {
                 Accept("application/json")

@@ -220,7 +220,7 @@ struct GetPostRequest: RequestSpec {
 
     /// The ResponseBody type (``BlogPost`` in this case) documents the expected response
     /// You'll use this type when decoding the URLSession response
-    var body: Get<BlogPost> {
+    var request: Get<BlogPost> {
         Get("posts", "\(id)")
             .headers {
                 Accept("application/json")
@@ -242,7 +242,7 @@ struct CreatePostRequest: RequestSpec {
     /// This example demonstrates if-else usage in modifiers:
     /// - Conditionally adding headers based on optional values
     /// - Conditionally adding query items based on boolean flags
-    var body: Post<BlogPost> {
+    var request: Post<BlogPost> {
         Post("posts")
             .body(encoder: JSONEncoder()) {
                 input

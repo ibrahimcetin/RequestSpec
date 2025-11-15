@@ -58,7 +58,7 @@
 /// struct GetUserRequest: RequestSpec {
 ///     let userID: String
 ///
-///     var body: Get<User> {
+///     var request: Get<User> {
 ///         Get("users", userID)
 ///     }
 /// }
@@ -193,6 +193,6 @@ extension NetworkService {
     ///
     /// This method extracts the underlying ``Request`` from the spec and sends it.
     public func send<RS: RequestSpec>(_ requestSpec: RS) async throws -> HTTPResponse<RS.ResponseBody> {
-        try await send(requestSpec.body)
+        try await send(requestSpec.request)
     }
 }

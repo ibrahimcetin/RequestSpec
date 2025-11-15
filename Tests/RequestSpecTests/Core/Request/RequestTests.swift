@@ -279,7 +279,7 @@ struct ErrorHandlingTests {
 @Suite("Request Integration Tests", .tags(.integration, .urlBuilding))
 struct RequestIntegrationTests {
     struct SampleRequest: RequestSpec {
-        var body: Post<TestResponse> {
+        var request: Post<TestResponse> {
             Post("api", "v1", "users")
                 .queryItems {
                     Item("format", value: "json")
